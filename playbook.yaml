@@ -1,0 +1,55 @@
+---
+- name: Deploy React web application
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+
+    - name: Install npm
+      apt:
+        name: npm
+        state: present
+
+    - name: Clone React application repository
+      git:
+        repo: https://github.com/Arun02136/react-app.git
+        dest: /opt/react
+
+    - name: Install application dependencies
+      command: npm install
+      args:
+        chdir: /opt/react/my-app
+
+    - name: Build React application
+      command: npm run build
+      args:
+        chdir: /opt/react/my-app
+
+    - name: Install application dependencies on api
+      command: npm install
+      args:
+        chdir: /opt/react/api
+
+    - name: Install application dependencies on api
+      command: node server.js
+      args:
+        chdir: /opt/react/api
+
+          #    - name: Copy application files to web servers
+          #      copy:
+          #        src: /opt/react/my-app/build/
+          #        dest: /var/www/html/
+          #        remote_src: yes
+
+          #    - name: Restart Apache service
+          #      service:
+          #        name: apache2
+          #        state: restarted
